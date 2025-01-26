@@ -23,52 +23,39 @@ app.get('/get-ff-account', async (req, res) => {
         const targetApiUrl = `https://api.davidcyriltech.my.id/ffstalk?id=${id}`;
         const response = await axios.get(targetApiUrl);
 
-        if (response.data && response.data.success) {
+        // Log the raw response for debugging
+        console.log(response.data);
+
+        // Check if response.data and required fields are defined
+        if (response.data && response.data.success && response.data.account) {
+            const accountData = response.data.account;
+
             // Restructure the response data
             const modifiedData = {
                 success: response.data.success,
-                message: response.data.message,
-                status: response.data.status,
-                timestamp: response.data.timestamp,
+                creator: response.data.creator || "Dexter", // Default to Dexter if not present
                 account: {
-                    id: response.data.data.account.id,
-                    name: response.data.data.account.name,
-                    level: response.data.data.account.level,
-                    xp: response.data.data.account.xp,
-                    region: response.data.data.account.region,
-                    created_at: response.data.data.account.created_at,
-                    last_login: response.data.data.account.last_login,
-                    honor_score: response.data.data.account.honor_score,
-                    booyah_pass_badge: response.data.data.account.booyah_pass_badge,
-                    BR_points: response.data.data.account.BR_points,
-                    CS_points: response.data.data.account.CS_points,
+                    id: accountData.id,
+                    name: accountData.name,
+                    level: accountData.level,
+                    xp: accountData.xp,
+                    region: accountData.region,
+                    likes: accountData.likes,
+                    bio: accountData.bio,
+                    created_at: accountData.created_at,
+                    last_login: accountData.last_login,
+                    honor_score: accountData.honor_score,
+                    booyah_pass: accountData.booyah_pass,
+                    booyah_pass_badge: accountData.booyah_pass_badge,
+                    evo_access_badge: accountData.evo_access_badge,
+                    equipped_title: accountData.equipped_title,
+                    BR_points: accountData.BR_points,
+                    CS_points: accountData.CS_points,
                 },
-                pet_info: {
-                    name: response.data.data.pet_info.name,
-                    level: response.data.data.pet_info.level,
-                    type: response.data.data.pet_info.type,
-                    xp: response.data.data.pet_info.xp,
-                },
-                guild: {
-                    name: response.data.data.guild.name,
-                    id: response.data.data.guild.id,
-                    level: response.data.data.guild.level,
-                    member_count: response.data.data.guild.member_count,
-                    capacity: response.data.data.guild.capacity,
-                },
-                guild_leader: {
-                    id: response.data.data.guild_leader.id,
-                    name: response.data.data.guild_leader.name,
-                    level: response.data.data.guild_leader.level,
-                    xp: response.data.data.guild_leader.xp,
-                    likes: response.data.data.guild_leader.likes,
-                    last_login: response.data.data.guild_leader.last_login,
-                    BR_points: response.data.data.guild_leader.BR_points,
-                    CS_points: response.data.data.guild_leader.CS_points,
-                },
-                accountStatus: response.data.data.accountStatus,
-                retrievedAt: response.data.data.retrievedAt,
-                creator: "Dexter",
+                pet_info: response.data.pet_info || {},
+                guild: response.data.guild || {},
+                guild_leader: response.data.guild_leader || {},
+                creator: response.data.creator || "Dexter",
             };
 
             return res.json({
@@ -82,7 +69,7 @@ app.get('/get-ff-account', async (req, res) => {
             });
         }
     } catch (error) {
-        console.error('Error fetching data:', error.message);
+        console.error('Error fetching data:', error.response ? error.response.data : error.message);
         res.status(500).json({
             success: false,
             message: 'An error occurred while fetching the data.',
