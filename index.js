@@ -9,13 +9,15 @@ const PORT = 3000;
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Endpoint to fetch data by ID
-app.get('/get-ff-account', async (req, res) => {
+app.get('/get-ff-account-details-dexter', async (req, res) => {
     const { id } = req.query;
 
     if (!id) {
         return res.status(400).json({
             success: false,
             message: 'ID parameter is required!',
+            status: 'error',
+            timestamp: new Date().toISOString(),
         });
     }
 
@@ -27,16 +29,23 @@ app.get('/get-ff-account', async (req, res) => {
             const modifiedData = {
                 ...response.data,
                 creator: "Dexter",
+                accountStatus: response.data.success ? "Active" : "Inactive",
+                retrievedAt: new Date().toISOString(),
             };
 
             return res.json({
                 success: true,
+                message: 'Account data successfully retrieved.',
+                status: 'success',
+                timestamp: new Date().toISOString(),
                 data: modifiedData,
             });
         } else {
             return res.status(404).json({
                 success: false,
                 message: 'Account not found or API request failed.',
+                status: 'error',
+                timestamp: new Date().toISOString(),
             });
         }
     } catch (error) {
@@ -44,6 +53,8 @@ app.get('/get-ff-account', async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'An error occurred while fetching the data.',
+            status: 'error',
+            timestamp: new Date().toISOString(),
         });
     }
 });
