@@ -1,8 +1,12 @@
 const express = require('express');
 const axios = require('axios');
+const path = require('path');
 
 const app = express();
 const PORT = 3000;
+
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Endpoint to fetch data by ID
 app.get('/get-ff-account', async (req, res) => {
@@ -16,15 +20,10 @@ app.get('/get-ff-account', async (req, res) => {
     }
 
     try {
-        // Target API URL
         const targetApiUrl = `https://api.davidcyriltech.my.id/ffstalk?id=${id}`;
-
-        // Fetch data from the target API
         const response = await axios.get(targetApiUrl);
 
-        // Check if the response indicates success
         if (response.data && response.data.success) {
-            // Modify the "creator" field to "Dexter"
             const modifiedData = {
                 ...response.data,
                 creator: "Dexter",
@@ -47,6 +46,11 @@ app.get('/get-ff-account', async (req, res) => {
             message: 'An error occurred while fetching the data.',
         });
     }
+});
+
+// Render web page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Start the server
