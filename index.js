@@ -21,10 +21,12 @@ app.get('/get-ff-account', async (req, res) => {
 
     try {
         const targetApiUrl = `https://api.davidcyriltech.my.id/ffstalk?id=${id}`;
+
+        console.log('Making request to API:', targetApiUrl); // Log the URL before making the request
         const response = await axios.get(targetApiUrl);
 
-        // Log the raw response for debugging
-        console.log(response.data);
+        // Log the full raw response for debugging
+        console.log('Raw API Response:', response.data);
 
         // Check if response.data and required fields are defined
         if (response.data && response.data.success && response.data.data) {
@@ -81,6 +83,7 @@ app.get('/get-ff-account', async (req, res) => {
                 data: modifiedData,
             });
         } else {
+            console.error('Error: API response data is not as expected');
             return res.status(404).json({
                 success: false,
                 message: 'Account not found or API request failed.',
