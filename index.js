@@ -9,15 +9,13 @@ const PORT = 3000;
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Endpoint to fetch data by ID
-app.get('/get-ff-account-details-dexter', async (req, res) => {
+app.get('/get-ff-account', async (req, res) => {
     const { id } = req.query;
 
     if (!id) {
         return res.status(400).json({
             success: false,
             message: 'ID parameter is required!',
-            status: 'error',
-            timestamp: new Date().toISOString(),
         });
     }
 
@@ -26,26 +24,61 @@ app.get('/get-ff-account-details-dexter', async (req, res) => {
         const response = await axios.get(targetApiUrl);
 
         if (response.data && response.data.success) {
+            // Restructure the response data
             const modifiedData = {
-                ...response.data,
+                success: response.data.success,
+                message: response.data.message,
+                status: response.data.status,
+                timestamp: response.data.timestamp,
+                account: {
+                    id: response.data.data.account.id,
+                    name: response.data.data.account.name,
+                    level: response.data.data.account.level,
+                    xp: response.data.data.account.xp,
+                    region: response.data.data.account.region,
+                    created_at: response.data.data.account.created_at,
+                    last_login: response.data.data.account.last_login,
+                    honor_score: response.data.data.account.honor_score,
+                    booyah_pass_badge: response.data.data.account.booyah_pass_badge,
+                    BR_points: response.data.data.account.BR_points,
+                    CS_points: response.data.data.account.CS_points,
+                },
+                pet_info: {
+                    name: response.data.data.pet_info.name,
+                    level: response.data.data.pet_info.level,
+                    type: response.data.data.pet_info.type,
+                    xp: response.data.data.pet_info.xp,
+                },
+                guild: {
+                    name: response.data.data.guild.name,
+                    id: response.data.data.guild.id,
+                    level: response.data.data.guild.level,
+                    member_count: response.data.data.guild.member_count,
+                    capacity: response.data.data.guild.capacity,
+                },
+                guild_leader: {
+                    id: response.data.data.guild_leader.id,
+                    name: response.data.data.guild_leader.name,
+                    level: response.data.data.guild_leader.level,
+                    xp: response.data.data.guild_leader.xp,
+                    likes: response.data.data.guild_leader.likes,
+                    last_login: response.data.data.guild_leader.last_login,
+                    BR_points: response.data.data.guild_leader.BR_points,
+                    CS_points: response.data.data.guild_leader.CS_points,
+                },
+                accountStatus: response.data.data.accountStatus,
+                retrievedAt: response.data.data.retrievedAt,
                 creator: "Dexter",
-                accountStatus: response.data.success ? "Active" : "Inactive",
-                retrievedAt: new Date().toISOString(),
             };
 
             return res.json({
                 success: true,
-                message: 'Account data successfully retrieved.',
-                status: 'success',
-                timestamp: new Date().toISOString(),
                 data: modifiedData,
             });
         } else {
             return res.status(404).json({
                 success: false,
                 message: 'Account not found or API request failed.',
-                status: 'error',
-                timestamp: new Date().toISOString(),
             });
         }
     } catch (error) {
@@ -53,8 +86,6 @@ app.get('/get-ff-account-details-dexter', async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'An error occurred while fetching the data.',
-            status: 'error',
-            timestamp: new Date().toISOString(),
         });
     }
 });
