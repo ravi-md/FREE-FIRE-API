@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FF Account Lookup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>FF Account Lookup</h1>
+    <p>Enter an ID to get account details:</p>
+    <input type="text" id="accountId" placeholder="Enter ID">
+    <button onclick="fetchAccount()">Get Account</button>
+    <div id="result" class="result"></div>
+
+    <script>
+        async function fetchAccount() {
+            const accountId = document.getElementById('accountId').value;
+            const resultDiv = document.getElementById('result');
+
+            if (!accountId) {
+                resultDiv.innerHTML = '<p style="color: red;">Please enter an ID!</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/get-ff-account?id=${accountId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const account = data.data.account;
+                    resultDiv.innerHTML = `
+                        <h3>Account Details</h3>
+                        <p><strong>ID:</strong> ${account.id}</p>
+                        <p><strong>Name:</strong> ${account.name}</p>
+                        <p><strong>Level:</strong> ${account.level}</p>
+                        <p><strong>Region:</strong> ${account.region}</p>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<p style="color: red;">${data.message}</p>`;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = '<p style="color: red;">An error occurred. Please try again.</p>';
+            }
+        }
+    </script>
+</body>
+</html>
