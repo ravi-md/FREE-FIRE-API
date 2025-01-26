@@ -27,13 +27,16 @@ app.get('/get-ff-account', async (req, res) => {
         console.log(response.data);
 
         // Check if response.data and required fields are defined
-        if (response.data && response.data.success && response.data.account) {
-            const accountData = response.data.account;
+        if (response.data && response.data.success && response.data.data) {
+            const accountData = response.data.data.account;
+            const petInfo = response.data.data.pet_info || {};
+            const guild = response.data.data.guild || {};
+            const guildLeader = response.data.data.guild_leader || {};
 
-            // Restructure the response data
+            // Restructure the response data with "creator" set to "Dexter Tech"
             const modifiedData = {
                 success: response.data.success,
-                creator: response.data.creator || "Dexter", // Default to Dexter if not present
+                creator: "Dexter Tech", // Set creator to Dexter Tech
                 account: {
                     id: accountData.id,
                     name: accountData.name,
@@ -41,21 +44,36 @@ app.get('/get-ff-account', async (req, res) => {
                     xp: accountData.xp,
                     region: accountData.region,
                     likes: accountData.likes,
-                    bio: accountData.bio,
                     created_at: accountData.created_at,
                     last_login: accountData.last_login,
                     honor_score: accountData.honor_score,
-                    booyah_pass: accountData.booyah_pass,
                     booyah_pass_badge: accountData.booyah_pass_badge,
-                    evo_access_badge: accountData.evo_access_badge,
-                    equipped_title: accountData.equipped_title,
                     BR_points: accountData.BR_points,
                     CS_points: accountData.CS_points,
                 },
-                pet_info: response.data.pet_info || {},
-                guild: response.data.guild || {},
-                guild_leader: response.data.guild_leader || {},
-                creator: response.data.creator || "Dexter",
+                pet_info: {
+                    name: petInfo.name,
+                    level: petInfo.level,
+                    type: petInfo.type,
+                    xp: petInfo.xp,
+                },
+                guild: {
+                    name: guild.name,
+                    id: guild.id,
+                    level: guild.level,
+                    member_count: guild.member_count,
+                    capacity: guild.capacity,
+                },
+                guild_leader: {
+                    id: guildLeader.id,
+                    name: guildLeader.name,
+                    level: guildLeader.level,
+                    xp: guildLeader.xp,
+                    likes: guildLeader.likes,
+                    last_login: guildLeader.last_login,
+                    BR_points: guildLeader.BR_points,
+                    CS_points: guildLeader.CS_points,
+                },
             };
 
             return res.json({
