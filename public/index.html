@@ -50,14 +50,45 @@
                     const account = data.data.account;
                     resultDiv.innerHTML = `
                         <h3>Account Details</h3>
-                        <p><strong>ID:</strong> ${account.id}</p>
-                        <p><strong>Name:</strong> ${account.name}</p>
-                        <p><strong>Level:</strong> ${account.level}</p>
-                        <p><strong>likes:</stronge> ${account.likes}</p>
-                        <p><strong>Bio:</stronge> ${account.bio}</p>
-                        <p><strong>Region:</strong> ${account.region}</p>
-                        <p>strong>Last login:</strong> ${account.last_login}</p>
-                    `;
+<p><strong>ID:</strong> ${account.id}</p>
+<p><strong>Name:</strong> ${account.name}</p>
+<p><strong>Level:</strong> ${account.level}</p>
+<p><strong>Likes:</strong> ${account.likes}</p>
+<p><strong>Bio:</strong> ${account.bio}</p>
+<p><strong>Region:</strong> ${account.region}</p>
+<p><strong>Last login:</strong> ${account.last_login}</p>
+<p><strong>Created At:</strong> ${account.created_at}</p>
+<p><strong>Honor Score:</strong> ${account.honor_score}</p>
+<p><strong>Booyah Pass:</strong> ${account.booyah_pass}</p>
+<p><strong>Booyah Pass Badge:</strong> ${account.booyah_pass_badge}</p>
+<p><strong>Evo Access Badge:</strong> ${account.evo_access_badge}</p>
+<p><strong>Equipped Title:</strong> ${account.equipped_title}</p>
+<p><strong>BR Points:</strong> ${account.BR_points}</p>
+<p><strong>CS Points:</strong> ${account.CS_points}</p>
+
+<h3>Pet Info</h3>
+<p><strong>Pet Name:</strong> ${pet_info.name}</p>
+<p><strong>Pet Level:</strong> ${pet_info.level}</p>
+<p><strong>Pet Type:</strong> ${pet_info.type}</p>
+<p><strong>Pet XP:</strong> ${pet_info.xp}</p>
+
+<h3>Guild Info</h3>
+<p><strong>Guild Name:</strong> ${guild.name}</p>
+<p><strong>Guild ID:</strong> ${guild.id}</p>
+<p><strong>Guild Level:</strong> ${guild.level}</p>
+<p><strong>Guild Member Count:</strong> ${guild.member_count}</p>
+<p><strong>Guild Capacity:</strong> ${guild.capacity}</p>
+
+<h3>Guild Leader Info</h3>
+<p><strong>Leader ID:</strong> ${guild_leader.id}</p>
+<p><strong>Leader Name:</strong> ${guild_leader.name}</p>
+<p><strong>Leader Level:</strong> ${guild_leader.level}</p>
+<p><strong>Leader Likes:</strong> ${guild_leader.likes}</p>
+<p><strong>Leader XP:</strong> ${guild_leader.xp}</p>
+<p><strong>Leader Last Login:</strong> ${guild_leader.last_login}</p>
+<p><strong>Leader BR Points:</strong> ${guild_leader.BR_points}</p>
+<p><strong>Leader CS Points:</strong> ${guild_leader.CS_points}</p>
+  `;
                 } else {
                     resultDiv.innerHTML = `<p style="color: red;">${data.message}</p>`;
                 }
