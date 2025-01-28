@@ -4,50 +4,163 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FF Account Lookup</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #fff;
+            min-height: 100vh;
             padding: 20px;
-            background-color: #f4f4f9;
         }
-        input, button {
-            padding: 10px;
-            margin: 10px;
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            color: #4ecca3;
+            text-shadow: 0 0 10px rgba(78, 204, 163, 0.3);
+        }
+
+        .search-box {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px 0;
+        }
+
+        input {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
             font-size: 16px;
+            width: 300px;
+            transition: all 0.3s ease;
         }
+
+        input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(78, 204, 163, 0.3);
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            background: #4ecca3;
+            color: #1a1a2e;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #45b393;
+            transform: translateY(-2px);
+        }
+
         .result {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
             margin-top: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .info-section {
+            margin: 20px 0;
             padding: 15px;
-            background-color: #fff;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .info-section h3 {
+            color: #4ecca3;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #4ecca3;
+            padding-bottom: 5px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            padding: 10px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: left;
-            display: inline-block;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .info-item strong {
+            color: #4ecca3;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .error {
+            color: #ff6b6b;
+            text-align: center;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <h1>FF Account Lookup</h1>
-    <p>Enter an ID to get account details:</p>
-    <input type="text" id="accountId" placeholder="Enter ID">
-    <button onclick="fetchAccount()">Get Account</button>
-    <div id="result" class="result"></div>
+    <div class="container">
+        <h1 class="animate__animated animate__fadeInDown">FF Account Lookup</h1>
+        <div class="search-box animate__animated animate__fadeInUp">
+            <input type="text" id="accountId" placeholder="Enter ID">
+            <button onclick="fetchAccount()">Get Account</button>
+        </div>
+        <div id="result" class="result"></div>
+    </div>
 
     <script>
         async function fetchAccount() {
             const accountId = document.getElementById('accountId').value;
             const resultDiv = document.getElementById('result');
-
+            
             if (!accountId) {
-                resultDiv.innerHTML = '<p style="color: red;">Please enter an ID!</p>';
+                resultDiv.innerHTML = '<p class="error">Please enter an ID!</p>';
                 return;
             }
 
             try {
                 const response = await fetch(`/get-ff-account?id=${accountId}`);
                 const data = await response.json();
-
+                
                 if (data.success) {
                     const account = data.data.account;
                     const pet_info = data.data.pet_info;
@@ -55,52 +168,120 @@
                     const guild_leader = data.data.guild_leader;
 
                     resultDiv.innerHTML = `
-                        <h3>Account Details</h3>
-                        <p><strong>ID:</strong> ${account.id}</p>
-                        <p><strong>Name:</strong> ${account.name}</p>
-                        <p><strong>Level:</strong> ${account.level}</p>
-                        <p><strong>Likes:</strong> ${account.likes}</p>
-                        <p><strong>Bio:</strong> ${account.bio}</p>
-                        <p><strong>Region:</strong> ${account.region}</p>
-                        <p><strong>Last login:</strong> ${account.last_login}</p>
-                        <p><strong>Created At:</strong> ${account.created_at}</p>
-                        <p><strong>Honor Score:</strong> ${account.honor_score}</p>
-                        <p><strong>Booyah Pass:</strong> ${account.booyah_pass}</p>
-                        <p><strong>Booyah Pass Badge:</strong> ${account.booyah_pass_badge}</p>
-                        <p><strong>Evo Access Badge:</strong> ${account.evo_access_badge}</p>
-                        <p><strong>Equipped Title:</strong> ${account.equipped_title}</p>
-                        <p><strong>BR Points:</strong> ${account.BR_points}</p>
-                        <p><strong>CS Points:</strong> ${account.CS_points}</p>
+                        <div class="info-section">
+                            <h3>Account Details</h3>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <strong>ID</strong>
+                                    ${account.id}
+                                </div>
+                                <div class="info-item">
+                                    <strong>Name</strong>
+                                    ${account.name}
+                                </div>
+                                <div class="info-item">
+                                    <strong>Level</strong>
+                                    ${account.level}
+                                </div>
+                                <div class="info-item">
+                                    <strong>Likes</strong>
+                                    ${account.likes}
+                                </div>
+                                <div class="info-item">
+                                    <strong>Region</strong>
+                                    ${account.region}
+                                </div>
+                                <div class="info-item">
+                                    <strong>Honor Score</strong>
+                                    ${account.honor_score}
+                                </div>
+                                <div class="info-item">
+                                    <strong>BR Points</strong>
+                                    ${account.BR_points}
+                                </div>
+                                <div class="info-item">
+                                    <strong>CS Points</strong>
+                                    ${account.CS_points}
+                                </div>
+                            </div>
+                        </div>
 
-                        <h3>Pet Info</h3>
-                        <p><strong>Pet Name:</strong> ${pet_info.name}</p>
-                        <p><strong>Pet Level:</strong> ${pet_info.level}</p>
-                        <p><strong>Pet Type:</strong> ${pet_info.type}</p>
-                        <p><strong>Pet XP:</strong> ${pet_info.xp}</p>
+                        <div class="info-section">
+                            <h3>Pet Info</h3>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <strong>Name</strong>
+                                    ${pet_info.name}
+                                </div>
+                                <div class="info-item">
+                                    <strong>Level</strong>
+                                    ${pet_info.level}
+                                </div>
+                                <div class="info-item">
+                                    <strong>Type</strong>
+                                    ${pet_info.type}
+                                </div>
+                                <div class="info-item">
+                                    <strong>XP</strong>
+                                    ${pet_info.xp}
+                                </div>
+                            </div>
+                        </div>
 
-                        <h3>Guild Info</h3>
-                        <p><strong>Guild Name:</strong> ${guild.name}</p>
-                        <p><strong>Guild ID:</strong> ${guild.id}</p>
-                        <p><strong>Guild Level:</strong> ${guild.level}</p>
-                        <p><strong>Guild Member Count:</strong> ${guild.member_count}</p>
-                        <p><strong>Guild Capacity:</strong> ${guild.capacity}</p>
+                        <div class="info-section">
+                            <h3>Guild Info</h3>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <strong>Name</strong>
+                                    ${guild.name}
+                                </div>
+                                <div class="info-item">
+                                    <strong>ID</strong>
+                                    ${guild.id}
+                                </div>
+                                <div class="info-item">
+                                    <strong>Level</strong>
+                                    ${guild.level}
+                                </div>
+                                <div class="info-item">
+                                    <strong>Members</strong>
+                                    ${guild.member_count}/${guild.capacity}
+                                </div>
+                            </div>
+                        </div>
 
-                        <h3>Guild Leader Info</h3>
-                        <p><strong>Leader ID:</strong> ${guild_leader.id}</p>
-                        <p><strong>Leader Name:</strong> ${guild_leader.name}</p>
-                        <p><strong>Leader Level:</strong> ${guild_leader.level}</p>
-                        <p><strong>Leader Likes:</strong> ${guild_leader.likes}</p>
-                        <p><strong>Leader XP:</strong> ${guild_leader.xp}</p>
-                        <p><strong>Leader Last Login:</strong> ${guild_leader.last_login}</p>
-                        <p><strong>Leader BR Points:</strong> ${guild_leader.BR_points}</p>
-                        <p><strong>Leader CS Points:</strong> ${guild_leader.CS_points}</p>
+                        <div class="info-section">
+                            <h3>Guild Leader Info</h3>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <strong>Name</strong>
+                                    ${guild_leader.name}
+                                </div>
+                                <div class="info-item">
+                                    <strong>Level</strong>
+                                    ${guild_leader.level}
+                                </div>
+                                <div class="info-item">
+                                    <strong>Likes</strong>
+                                    ${guild_leader.likes}
+                                </div>
+                                <div class="info-item">
+                                    <strong>BR Points</strong>
+                                    ${guild_leader.BR_points}
+                                </div>
+                                <div class="info-item">
+                                    <strong>CS Points</strong>
+                                    ${guild_leader.CS_points}
+                                </div>
+                            </div>
+                        </div>
                     `;
                 } else {
-                    resultDiv.innerHTML = `<p style="color: red;">${data.message}</p>`;
+                    resultDiv.innerHTML = `<p class="error">${data.message}</p>`;
                 }
             } catch (error) {
                 console.error('Error:', error);
-                resultDiv.innerHTML = '<p style="color: red;">An error occurred. Please try again.</p>';
+                resultDiv.innerHTML = '<p class="error">An error occurred. Please try again.</p>';
             }
         }
     </script>
